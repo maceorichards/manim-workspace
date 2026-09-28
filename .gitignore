@@ -1,0 +1,15 @@
+.venv/
+videos/
+*.mp4
+*.png
+*.jpg
+*.jpeg
+frames/
+__pycache__/
+*.egg-info/
+*.vsix
+.DS_Store
+
+# Machine-local pointers to external context (one SOURCES.local.md per topic)
+*.local.md
+.claude/settings.local.json

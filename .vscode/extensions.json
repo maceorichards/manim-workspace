@@ -1,0 +1,4 @@
+{
+  // Manim-Notebook is not on Open VSX; in Cursor install it from a VSIX (see README.md).
+  "recommendations": ["ms-python.python", "Manim-Notebook.manim-notebook"]
+}

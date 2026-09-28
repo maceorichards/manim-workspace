@@ -1,0 +1,20 @@
+[project]
+name = "manim-workspace"
+version = "0.1.0"
+description = "ManimGL (3b1b) visualizations"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # manimlib 1.7.2 calls shell.magic() for autoreload; IPython 9 removed it.
+    "ipython<9",
+    "manimgl==1.7.2",
+    # manimlib 1.7.2 imports pkg_resources at startup; setuptools 81 removed it.
+    "setuptools<81",
+]
+
+[build-system]
+requires = ["setuptools>=64,<81"]
+build-backend = "setuptools.build_meta"
+
+# Installed editable so `from common import *` resolves from any topic folder.
+[tool.setuptools]
+py-modules = ["common"]
