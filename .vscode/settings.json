@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // VS Code and Cursor find .venv on their own (bin/ on macOS/Linux, Scripts\ on Windows).
   // Manim Notebook types `manimgl ...` into the integrated terminal, so .venv must be active there.
   "python.terminal.activateEnvironment": true,
   "manim-notebook.autoreload": true,
