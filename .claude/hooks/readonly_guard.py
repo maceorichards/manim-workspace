@@ -1,7 +1,8 @@
 """PreToolUse hook for Bash: keep external source directories read-only.
 
-Usage (in .claude/settings.local.json, since the paths are machine-specific):
-    .venv/bin/python "$CLAUDE_PROJECT_DIR/.claude/hooks/readonly_guard.py" /abs/dir [/abs/dir ...]
+Usage (in .claude/settings.local.json, since the paths are machine-specific; written by
+`just guard-sync` from every SOURCES.local.md):
+    uv run --project "$CLAUDE_PROJECT_DIR" python "$CLAUDE_PROJECT_DIR/.claude/hooks/readonly_guard.py" /abs/dir ...
 
 Denies a Bash command when it names a protected directory (absolute, ~-relative, or a
 cd into it) AND contains a write form (redirect, rm/mv/cp/touch/..., in-place edits,
@@ -40,13 +41,25 @@ def variants(path):
     if path.startswith(home + os.sep):
         rel = path[len(home):]
         out |= {"~" + rel, "$HOME" + rel, "${HOME}" + rel}
+    if re.match(r"[A-Za-z]:\\", path):
+        # Windows: Claude Code runs Bash through Git Bash, so the same directory can
+        # appear as C:\x, C:/x or /c/x.
+        fwd = path.replace("\\", "/")
+        out |= {fwd, "/" + fwd[0].lower() + fwd[2:]}
+        out |= {v.replace("\\", "/") for v in out}
     return out
+
+
+def contains(cmd, needle):
+    if sys.platform == "win32":
+        return needle.lower() in cmd.lower()
+    return needle in cmd
 
 
 def names_protected(cmd, protected):
     for p in protected:
         for v in variants(p):
-            if v in cmd:
+            if contains(cmd, v):
                 return p
         # a bare cd into the directory by its last component (e.g. `cd presentation-2`)
         base = re.escape(os.path.basename(os.path.normpath(p)))
