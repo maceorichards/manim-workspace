@@ -18,3 +18,24 @@ build-backend = "setuptools.build_meta"
 # Installed editable so `from common import *` resolves from any topic folder.
 [tool.setuptools]
 py-modules = ["common"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.2",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 100
+# Vendored skill code keeps its upstream style (see .claude/skills/manimgl/NOTICE.md).
+extend-exclude = [".claude/skills/manimgl", ".claude/worktrees", "scratch"]
+
+[tool.ruff.lint]
+# Correctness only; formatting is not enforced (`just fmt` is opt-in).
+select = ["E4", "E7", "E9", "F", "B"]
+ignore = [
+    "F403", "F405",  # scene files star-import manimlib through common.py by design
+    "E741", "E743",  # I, l, O are standard names for current, length, origin
+    "E702", "E731",  # one-line math helpers and lambdas are idiomatic in scene code
+    "B007", "B905",  # unused loop vars / zip() without strict= are noise here
+]
