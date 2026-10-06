@@ -1,0 +1,14 @@
+# Installed by `just setup` (uv run pre-commit install). Run on everything: `just lint`.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (correctness rules in pyproject.toml)
+        entry: uv run --no-sync ruff check --force-exclude
+        language: system
+        types: [python]
+      - id: check-staged
+        name: no generated, local, or (on main) area files
+        entry: uv run --no-sync python scripts/check_staged.py
+        language: system
+        pass_filenames: true

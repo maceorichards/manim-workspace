@@ -1,0 +1,32 @@
+# Lint + every __main__ assert block, on all three supported OSes.
+# No LaTeX, ffmpeg, or GPU here: rendering is checked locally with `just setup` / `just snap`.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: extractions/setup-just@v3
+      # Importing manimlib imports pyglet's window module, which needs a display on Linux.
+      - name: OpenGL runtime and virtual display
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl1 libegl1 xvfb
+      - run: uv sync --locked
+      - run: just lint
+      - name: check-staged (generated, local, and on main area files)
+        shell: bash
+        run: git ls-files | xargs uv run --no-sync python scripts/check_staged.py --branch "${GITHUB_REF_NAME}"
+      - name: check-all
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then xvfb-run -a just check-all; else just check-all; fi
