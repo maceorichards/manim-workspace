@@ -10,9 +10,12 @@ __pycache__/
 *.vsix
 .DS_Store
 
-# Machine-local pointers to external context (one SOURCES.local.md per topic)
-*.local.md
-.claude/settings.local.json
+# Machine-local files: SOURCES.local.md (paths to external context), style.local.yml
+# (style override), .claude/settings.local.json and guard.local.json (read-only guard)
+*.local.*
+
+# Second checkout of main for template work (see CONTRIBUTING.md)
+.claude/worktrees/
 
 # Precomputed model runs (npz), regenerated on demand
 cache/
