@@ -15,8 +15,9 @@ source content copied word for word.
   visual, or fixed durations and sizes.
 - **`WORKBENCH.md`:** decisions still in flux. They get rewritten after each
   render and pruned once `main.py` reflects them.
-- **`common.py`:** conventions shared with other movies (e.g. a neuron-color
-  scheme). Put shared things in code, not in notes.
+- **`<area>/<module>.py` or `common.py`:** conventions shared with other
+  movies in the area, or with every area (e.g. a neuron-color scheme). Put
+  shared things in code, not in notes.
 
 ## Rules
 
