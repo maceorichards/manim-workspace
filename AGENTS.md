@@ -1,0 +1,40 @@
+# ManimGL workspace
+
+Agent instructions for this repo (Claude Code reads them through `CLAUDE.md`; Codex, Cursor, and
+others read this file directly). Areas can add their own `<area>/AGENTS.md`.
+
+- Engine is **ManimGL 1.7.2** (`from manimlib import *`, `manimgl` CLI). Never Manim CE
+  (`from manim import *`). Use the `manimgl` skill for scene code and the
+  `iteration-workbench` skill for anything longer than one beat.
+- Read `MANIM_WORKFLOW.md` before suggesting how to run, preview, or render anything.
+- Run everything from the project root through `just` (`just --list`) or `uv run`
+  (`uv run python …`, `uv run manimgl …`). This works on macOS, Linux, and Windows and picks up
+  `custom_config.yml`. Don't hard-code `.venv/bin/` or `.venv\Scripts\`.
+- One movie = one topic: `<area>/<topic>/` with `main.py`, `WORKBENCH.md`, and a gitignored
+  `SOURCES.local.md`. Start one with `just new <area> <topic> [SceneClass]`. Name topics and
+  scene classes for their content, never for a deck slot (`s03_vid1`).
+- Code shared by topics in one area goes in `<area>/<module>.py` (importable by name; `common.py`
+  puts the area on `sys.path`). Code shared by every area goes in `common.py`. Shared conventions
+  go in code, not notes.
+- External context (slide deck specs, notes) stays in its own directory. Before working on a
+  topic, read its `SOURCES.local.md` for the paths, then read those files. Don't copy their
+  content into this repo. Record the Manim decisions they lead to in `WORKBENCH.md` (still
+  changing) or the topic's optional `context_files/` (stable reference notes, tracked in git),
+  citing sources by their label in `SOURCES.local.md`, never by absolute path.
+- Directories named in any `SOURCES.local.md` are **read-only**: read them, never write,
+  move, copy into, or delete there. For Claude Code, `just guard-sync` enforces this with deny
+  rules in `.claude/settings.local.json` plus the Bash hook `.claude/hooks/readonly_guard.py`.
+  Other agents must honor it themselves (see `PORTING.md`).
+- Start scene files with `from common import *` and use `txt()` / `tex()` from `common.py`.
+- Verify with the headless path only: `just check <topic>` (asserts) → `just list <topic> <Scene>`
+  → `just snap <topic> <Scene> <indices>`, then read the PNGs. The scripts live in
+  `.claude/skills/manimgl/core/assets/`.
+- Output is per topic: renders go to `<area>/<topic>/videos/` (routed by `common.py`), snapshots
+  to `<area>/<topic>/frames/`. Don't pass `--video_dir` / `--out` to put them elsewhere. Both
+  are generated and gitignored; don't commit them.
+- Style: the house look is `DEFAULT_STYLE` in `common.py`. Personal overrides go in the
+  gitignored `style.local.yml` (`set-style-default` skill / `just style`), never in `common.py`.
+- `main` is the template: only template files belong there (enforced by the pre-commit hook).
+  Personal areas live on personal branches. See `CONTRIBUTING.md`.
+- The environment is managed by uv (`pyproject.toml`); add dependencies with `uv add`.
+  Before calling work done, run `just lint` and `just check-all`.
