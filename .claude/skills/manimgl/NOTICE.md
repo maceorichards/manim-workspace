@@ -53,6 +53,12 @@ Two further fixes were made in rule files that were later dropped as redundant
 (`creation-animations.md`'s `SpinInFromNothing`, `tex.md`'s substring indexing);
 both are covered correctly by `core/` and by this skill's footgun section.
 
+## Defects fixed in `core/`
+
+| File | Was | Now |
+|---|---|---|
+| `references/api-graphs.md` | `Dot(color=YELLOW)` (renders white in 1.7.2) | `Dot(fill_color=YELLOW)` |
+
 ## Re-syncing
 
 Neither upstream auto-updates. To pull changes deliberately:

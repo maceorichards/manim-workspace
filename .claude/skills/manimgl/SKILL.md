@@ -67,18 +67,21 @@ class Demo(Scene):
 
 ## Workflow
 
-This project iterates in VS Code with the Manim Notebook extension, **not** the
-`manimgl -se <line>` CLI loop. Read `MANIM_WORKFLOW.md` at the project root
-before suggesting how to run or re-run anything.
+This project iterates in VS Code or Cursor with the Manim Notebook extension,
+**not** the `manimgl -se <line>` CLI loop. Read `MANIM_WORKFLOW.md` at the
+project root before suggesting how to run or re-run anything. Commands go
+through `just` or `uv run` from the project root, never `.venv/bin/`, which
+doesn't exist on Windows.
 
 1. Write the scene outline in prose first — one thing proved per scene.
 2. Iterate in the editor with `##` cell markers; each cell's leading comment is
    its checkpoint. Keep the comment stable while iterating.
 3. Look at the frames before anyone else does:
-   `python core/assets/snapshot.py file.py Scene --list` numbers every
-   `self.play`/`self.wait`; `... Scene 4 9 14` writes `<topic>/frames/Scene_004.png`.
-4. Once composition is settled, `-w -l` for a low-quality file to judge timing.
-5. Only after timing is final, render `--hd` or `--uhd`.
+   `just list <area>/<topic> Scene` numbers every `self.play`/`self.wait`;
+   `just snap <area>/<topic> Scene 4 9 14` writes `<topic>/frames/Scene_004.png`.
+4. Once composition is settled, `just render <area>/<topic> Scene` for a
+   low-quality file to judge timing.
+5. Only after timing is final, render `hd` or `uhd`.
 
 What to look for in a snapshot: text crossing text, anything touching the frame
 edge (the frame is 14.2 × 8 units), leftovers from an earlier beat, labels too
@@ -156,6 +159,24 @@ canonical object.
 
 **`self.play()` needs an animation, not a mobject.** Use
 `self.play(square.animate.shift(RIGHT))`.
+
+**`color=` renders white on `Dot`, `Text`, and `Tex`.** Their `fill_color=WHITE`
+default wins over `color`. Use `Dot(fill_color=X)`, `.set_color(X)`, or `t2c`.
+This project's `txt()` / `tex()` (from `common.py`) map `color=` to
+`fill_color=` for you.
+
+**Pango CMU Serif draws θ as ϑ and `~` as a raised tilde.** Put those in
+`tex()`. In `Tex`, `--` is two hyphens (use `\text{\textendash}`), and a bare
+`:` gets relation spacing (use `{:}`).
+
+**Multi-string `Tex` loses relation spacing.** `Tex("r", "=", "x")` braces each
+piece, so `=` is spaced like an ordinary symbol. Use one string with `isolate=`
+or `t2c` when spacing matters.
+
+**CLI traps.** `--fps 60` arrives as a string and crashes the render. Set
+`default_camera_config = dict(fps=60)` on the scene, or `fps` in
+`style.local.yml`. `-s` without `-w` tries to open a window when run headless.
+A `run_time` that isn't a whole number of frames adds a frame.
 
 ## Attribution
 

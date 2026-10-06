@@ -29,7 +29,8 @@ direction is fluid and gets pruned once the scene file carries the result.
 The workbench lives next to the scene file it serves:
 `<area>/<topic>/WORKBENCH.md`, e.g.
 `learning/information_and_neural_coding/WORKBENCH.md`. Honor a path the user
-gives instead. Create the file when the topic does not have one.
+gives instead. Create the file when the topic does not have one; for a new topic, run
+`just new <area> <topic>` first, which brings a workbench with it.
 
 One file per topic, one section per initiative. Before the first change, read
 the current `main.py`, and read the source the scene is built from (lecture
@@ -90,14 +91,14 @@ Stop when at least one item is selectable. Show the checklist and wait.
 2. Write the beat. Keep the leading `##` cell comment stable — renaming it
    discards the Manim Notebook checkpoint (see `MANIM_WORKFLOW.md`).
 3. Verify, in this order:
-   - `python main.py` — the `if __name__ == "__main__"` asserts on the pure
-     functions, which need no manimgl.
-   - `snapshot.py <file> <Scene> --list` — confirms the scene runs end to end
+   - `just check <area>/<topic>` — the `if __name__ == "__main__"` asserts on
+     the pure functions, which need no rendering.
+   - `just list <area>/<topic> <Scene>` — confirms the scene runs end to end
      and numbers the frames.
-   - `snapshot.py <file> <Scene> <indices>` — then **read the PNGs**. Check for
-     text over text, anything touching the frame edge, leftovers from an
-     earlier beat, and a `Tex` that rendered as prose.
-   - Do not render `-w`, `--hd`, or `--uhd` while iterating.
+   - `just snap <area>/<topic> <Scene> <indices>` — then **read the PNGs**.
+     Check for text over text, anything touching the frame edge, leftovers from
+     an earlier beat, and a `Tex` that rendered as prose.
+   - Do not render (`just render`, `-w`, `--hd`, `--uhd`) while iterating.
 4. Record an outcome for every selected item, naming the observation that
    decided it: `revised — at a 5 Hz baseline the conditional is a near-delta
    spike that renders as a wall and hides the surface`.

@@ -176,7 +176,7 @@ tracker = ValueTracker(0.5)
 axes = Axes(x_range=(0, 3, 1), y_range=(0, 9, 1), width=6, height=4)
 graph = axes.get_graph(lambda x: x**2, color=BLUE)
 
-dot = Dot(color=YELLOW)
+dot = Dot(fill_color=YELLOW)  # Dot(color=) renders white: fill_color defaults to WHITE
 dot.add_updater(lambda m: m.move_to(axes.i2gp(tracker.get_value(), graph)))
 
 readout = DecimalNumber(0, num_decimal_places=2)
