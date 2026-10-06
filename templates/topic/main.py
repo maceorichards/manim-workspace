@@ -1,7 +1,7 @@
 """Topic template: a neuron's firing-rate curve.
 
 Copy this folder to <area>/<topic>/ to start a movie, and rename the scene
-class (videos/ is flat, so scene names must not repeat). It doubles as the
+class to describe its content. It doubles as the
 workspace smoke test. Exercises Text (Pango), Tex (LaTeX), Axes and a
 ValueTracker so a broken install shows up here before it shows up in real work.
 

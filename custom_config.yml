@@ -14,7 +14,8 @@ file_writer:
   saturation: 1.5
 
 directories:
-  # Renders land flat in videos/, named after the scene class.
+  # Fallback only: common.py reroutes renders to <topic>/videos/ next to the
+  # scene file. A file that doesn't import common lands in ./videos/.
   # mirror_module_path is left off: in 1.7.2 it crashes unless an absolute
   # removed_mirror_prefix is set, and it breaks snapshot.py's output path.
   mirror_module_path: False

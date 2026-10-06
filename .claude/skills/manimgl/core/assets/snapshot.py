@@ -4,13 +4,15 @@
     python snapshot.py file.py Scene 3 7 12     # frames after animations 3, 7 and 12
     python snapshot.py file.py Scene            # final frame only
     python snapshot.py file.py Scene 3 7 --hd   # 1080p instead of the default 480p
+    python snapshot.py file.py Scene 3 --res 672x600   # any WxH (sets the frame aspect)
 
 One process, however many frames. `construct()` runs once with every animation
 skipped (end states applied instantly) while `Scene.pre_play` is hooked; at each
 requested index the hook forces a draw and saves the image. Index K counts
 self.play() AND self.wait() calls from 0, in the order they execute, and the
 numbering is printed on every run -- so a single call can both number the beats
-and grab frames. Output: frames/<Scene>_<K>.png, or <Scene>_final.png.
+and grab frames. Output: frames/<Scene>_<K>.png (or <Scene>_final.png) in the
+scene file's folder, i.e. <area>/<topic>/frames/.
 
 The earlier version spawned `manimgl -s -w -n 0,K` per index, which replayed the
 whole scene from the top for each frame. On a scene whose replay costs ~50 s that
@@ -30,7 +32,7 @@ import tempfile
 
 RUN = '''
 import inspect, os, sys
-sys.argv = ["manimgl", {file!r}, {scene!r}, "-s", "-w", {quality!r},
+sys.argv = ["manimgl", {file!r}, {scene!r}, "-s", "-w", *{quality!r},
             "--video_dir", {tmp!r}, "--file_name", "_snap"]
 import manimlib
 from manimlib.scene.scene import Scene
@@ -97,8 +99,9 @@ def main():
     ap.add_argument("scene")
     ap.add_argument("indices", nargs="*", type=int, help="animation indices to stop before")
     ap.add_argument("--list", action="store_true", help="number the play/wait calls, save nothing")
-    ap.add_argument("--out", default="frames", help="output directory (default: frames)")
+    ap.add_argument("--out", help="output directory (default: frames/ next to the scene file)")
     ap.add_argument("--hd", action="store_true", help="1080p frames instead of 480p")
+    ap.add_argument("--res", metavar="WxH", help="explicit resolution, e.g. 672x600; overrides --hd")
     ap.add_argument("--quiet", action="store_true", help="print saved paths only, not the numbering")
     args = ap.parse_args()
 
@@ -107,13 +110,22 @@ def main():
             # manimgl silently falls back to another scene when the name is unknown
             raise SystemExit(f"no `class {args.scene}(` in {args.scene_file}")
 
+    out = args.out or os.path.join(os.path.dirname(os.path.abspath(args.scene_file)), "frames")
+
     if args.list:
         indices = []
     else:
         indices = args.indices or [None]
 
+    if args.res:
+        if not re.fullmatch(r"\d+x\d+", args.res):
+            raise SystemExit(f"--res wants WxH, got {args.res!r}")
+        quality = ["-r", args.res]
+    else:
+        quality = ["--hd" if args.hd else "-l"]
+
     numbering, saved, final = run(args.scene_file, args.scene, indices,
-                                  args.out, "--hd" if args.hd else "-l")
+                                  out, quality)
 
     if not args.quiet or args.list:
         print("\n".join(numbering))

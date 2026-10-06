@@ -13,3 +13,9 @@ __pycache__/
 # Machine-local pointers to external context (one SOURCES.local.md per topic)
 *.local.md
 .claude/settings.local.json
+
+# Precomputed model runs (npz), regenerated on demand
+cache/
+
+# Stashed earlier versions of a topic (code + renders), kept locally
+scratch/

@@ -32,5 +32,8 @@ Updates are manual: repeat with the new version number from the
 .venv/bin/manimgl templates/topic/main.py FiringRateCurve -w -l
 ```
 
+The render lands in `templates/topic/videos/`; delete it afterwards so it isn't
+copied into new topics.
+
 Then open that `main.py` in Cursor, put the cursor inside `construct`, and press
 `cmd+' cmd+s`.

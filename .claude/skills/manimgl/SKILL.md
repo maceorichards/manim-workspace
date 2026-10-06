@@ -76,7 +76,7 @@ before suggesting how to run or re-run anything.
    its checkpoint. Keep the comment stable while iterating.
 3. Look at the frames before anyone else does:
    `python core/assets/snapshot.py file.py Scene --list` numbers every
-   `self.play`/`self.wait`; `... Scene 4 9 14` writes `frames/Scene_004.png`.
+   `self.play`/`self.wait`; `... Scene 4 9 14` writes `<topic>/frames/Scene_004.png`.
 4. Once composition is settled, `-w -l` for a low-quality file to judge timing.
 5. Only after timing is final, render `--hd` or `--uhd`.
 

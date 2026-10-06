@@ -14,12 +14,18 @@ current working directory, so running from a topic folder silently drops the
 <area>/<topic>/WORKBENCH.md      queue of beats to try (iteration-workbench skill)
 <area>/<topic>/SOURCES.local.md  absolute paths to external context (gitignored)
 <area>/<topic>/context_files/    optional stable reference notes (tracked)
+<area>/<topic>/videos/           renders, named by scene (gitignored)
+<area>/<topic>/frames/           snapshot PNGs (gitignored)
 templates/topic/                 copy this to start a topic; also the smoke test
 common.py                        txt(), tex(), FONT -- `from common import *`
 custom_config.yml                black bg, CMU Serif, saturation 1.5, autoreload
-frames/                          snapshot PNGs (gitignored)
-videos/                          rendered movies, flat, named by scene (gitignored)
 ```
+
+Output is per topic, with no flags needed: `common.py` points manimgl at the
+scene file's `videos/` (CLI renders, `-s -w` stills, and Manim Notebook alike),
+and `snapshot.py` writes to the scene file's `frames/`. Frames are disposable;
+videos are deliverables. Don't pass `--video_dir` / `--out` to send them
+elsewhere.
 
 One movie = one topic, and topics in an area are independent. If several
 slides share the same deck, objects, or helpers, make them one topic with one
@@ -35,12 +41,12 @@ and checks them in `if __name__ == "__main__":` asserts.
 ```bash
 cp -R templates/topic <area>/<topic>
 mv <area>/<topic>/SOURCES.example.md <area>/<topic>/SOURCES.local.md
+rm -rf <area>/<topic>/videos <area>/<topic>/frames   # smoke-test output, if any
 ```
 
 Then fill in `SOURCES.local.md`, rename the scene class, and replace the
-example workbench initiative. Scene class names must not repeat across topics,
-because `videos/` is flat. Prefixing with the slide number (`S03FiringRate`)
-keeps them sorted and unique.
+example workbench initiative. Name scene classes for their content; each topic
+has its own `videos/`, so names only need to be unique within the topic.
 
 ### External context
 
@@ -55,7 +61,7 @@ source of truth. This repo holds only:
   tracked in git. Cite sources by their labels in `SOURCES.local.md`, never by
   absolute path. Delete `context_files/` from a new topic if you don't need it.
 
-Finished renders go one way: copy from `videos/` into the deck's assets
+Finished renders go one way: copy from `<topic>/videos/` into the deck's assets
 folder (listed in `SOURCES.local.md`) under a stable name.
 
 ## Interactive loop: Manim Notebook in Cursor
@@ -98,7 +104,7 @@ No window, one process per batch of frames:
 ```
 
 `--list` numbers every `self.play` / `self.wait`; the indexed form writes
-`frames/<Scene>_<K>.png` (480p; add `--hd` for 1080p). Read the PNGs and look
+`<area>/<topic>/frames/<Scene>_<K>.png` (480p; add `--hd` for 1080p). Read the PNGs and look
 for: text over text, anything touching the frame edge (14.2 x 8 units),
 leftovers from an earlier beat, labels unreadable at 480p, a `Tex` rendered as
 prose.
@@ -112,12 +118,12 @@ prose.
 ```
 
 `-n 8` starts at animation 8. Do not render `--hd`/`--uhd` while composition or
-timing is still moving. Output lands in `videos/<Scene>.mp4`; files from
-different topics with the same scene name overwrite each other, so give scene
-classes distinct names.
+timing is still moving. Output lands in `<area>/<topic>/videos/<Scene>.mp4`.
 
 ## Known footguns in this setup
 
+- A scene file that doesn't `from common import *` skips the output routing,
+  so its renders land in a root `./videos/` instead of the topic folder.
 - `Dot(color=YELLOW)` renders **white** in 1.7.2: `Dot` defaults
   `fill_color=WHITE`, which wins over `color`. Use `Dot(fill_color=YELLOW)`.
 - Multi-string `Tex("r", "=", "x")` braces each piece, so `=` loses its relation

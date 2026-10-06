@@ -154,6 +154,8 @@ Files land under `directories.subdirs.output` (default `videos`), relative to
 With `mirror_module_path: True`, the output path mirrors the source file's
 directory structure, which is how a repo with many scene files keeps renders
 organised.
+This project leaves it off and instead reroutes output in `common.py` to
+`<topic>/videos/` next to the scene file (an explicit `--video_dir` still wins).
 
 ## Requirements
 

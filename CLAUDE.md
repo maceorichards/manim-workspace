@@ -15,8 +15,13 @@
   changing) or the topic's optional `context_files/` (stable reference notes, tracked in git),
   citing sources by their label in `SOURCES.local.md`, never by absolute path. Movies in an
   area are independent; conventions shared between them go in code (`common.py`), not notes.
+- Directories named in any `SOURCES.local.md` are **read-only**: read them, never write,
+  move, copy into, or delete there. Enforced by `.claude/settings.local.json` (Edit/Write
+  deny rules) and the Bash hook `.claude/hooks/readonly_guard.py`.
 - Start scene files with `from common import *` and use `txt()` / `tex()` from `common.py`.
 - Verify with the headless path only (asserts → `snapshot.py --list` → `snapshot.py <indices>`,
   then read the PNGs). Scripts live in `.claude/skills/manimgl/core/assets/`.
-- `frames/` and `videos/` are generated output; don't commit them.
+- Output is per topic: renders go to `<area>/<topic>/videos/` (routed by `common.py`), snapshots
+  to `<area>/<topic>/frames/` (`snapshot.py` default). Don't pass `--video_dir` / `--out` to put
+  them elsewhere. Both are generated and gitignored; don't commit them.
 - Environment is managed by uv (`pyproject.toml`); add dependencies with `uv add`.
