@@ -36,8 +36,8 @@ videos are deliverables. Don't pass `--video_dir` / `--out` to send them
 elsewhere.
 
 One movie = one topic, and topics in an area are independent. If several
-slides share the same deck, objects, or helpers, make them one topic with one
-scene class per slide. Keep to two levels (area/topic); the skills and scripts
+clips share objects or helpers, make them one topic with one scene class per
+clip. Keep to two levels (area/topic); the skills and scripts
 assume it.
 
 Sharing code:
@@ -67,14 +67,14 @@ own `videos/`, so scene names only need to be unique within the topic.
 
 ### External context
 
-The slide deck and other sources stay in their own directories and remain the
+Sources (specs, notes, papers, figures) stay in their own directories and remain the
 source of truth. This repo holds only:
 
 - **paths**, in each topic's `SOURCES.local.md`. It's gitignored (`*.local.*`),
   one per topic, and holds no copied content.
 - **translations**: the Manim decisions a source leads to. Decisions still in
-  flux go in `WORKBENCH.md`; stable reference notes (color mappings, slide
-  specs, sizes) go in the topic's optional `context_files/`, which is
+  flux go in `WORKBENCH.md`; stable reference notes (color mappings,
+  per-clip specs, sizes) go in the topic's optional `context_files/`, which is
   tracked in git. Cite sources by their labels in `SOURCES.local.md`, never by
   absolute path. Delete `context_files/` from a new topic if you don't need it.
 
@@ -82,9 +82,6 @@ Source directories are read-only for agents. `just guard-sync` (also run by
 `just new` and `just setup`) reads every `SOURCES.local.md` and writes Claude
 Code's deny rules and Bash hook into `.claude/settings.local.json`. Re-run it
 after editing a `SOURCES.local.md`, then restart Claude Code.
-
-Finished renders go one way: you copy them yourself from `<topic>/videos/` into
-the deck's assets folder (listed in `SOURCES.local.md`) under a stable name.
 
 ## Interactive loop: Manim Notebook in Cursor or VS Code
 
@@ -155,7 +152,7 @@ still moving. Output lands in `<area>/<topic>/videos/<Scene>.mp4`.
 The house look (black background, CMU Serif, saturation 1.5, 30 fps) is
 `DEFAULT_STYLE` in `common.py`, mirrored in `custom_config.yml`. To change it
 on your machine only, use the `set-style-default` skill or `just style`
-(`--preset light-slides`, `--set background=#0B1020 palette.accent=#E07A5F`,
+(`--preset light`, `--set background=#0B1020 palette.accent=#E07A5F`,
 `--reset`). That writes the gitignored `style.local.yml`. Palette entries become
 uppercase names in scene code (`ACCENT`). Change `DEFAULT_STYLE` only to change
 the template for everyone.

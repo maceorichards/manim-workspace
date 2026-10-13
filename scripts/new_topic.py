@@ -22,7 +22,10 @@ AREA_TEMPLATE = ROOT / "templates" / "area"
 TEMPLATE_SCENE = "FiringRateCurve"
 SKIP = shutil.ignore_patterns("videos", "frames", "cache", "__pycache__", "*.local.md")
 NAME = re.compile(r"[a-z0-9]+(?:[-_][a-z0-9]+)*")
-DECK_SLOT = re.compile(r"(^|_)s\d+_?(vid|slide)\d+", re.I)
+POSITION_NAME = re.compile(
+    r"(?:^|[-_])(?:sec|section|part|ch|chapter|slide|vid|video|clip|shot|scene|ep|episode)"
+    r"[-_]?\d+(?=[-_]|$)"
+)
 
 
 def camel(name):
@@ -39,8 +42,11 @@ def main():
     for label, value in (("area", args.area), ("topic", args.topic)):
         if not NAME.fullmatch(value):
             sys.exit(f"{label} {value!r}: use lowercase letters, digits, - or _")
-        if DECK_SLOT.search(value):
-            print(f"warning: {label} {value!r} looks like a deck slot; name it for its content")
+        if POSITION_NAME.search(value):
+            print(
+                f"warning: {label} {value!r} looks like a position (part/clip/slide number); "
+                "name it for its content"
+            )
     if args.area in {"templates", "scripts", "docs"} or args.area.startswith("."):
         sys.exit(f"{args.area!r} is reserved")
 

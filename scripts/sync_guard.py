@@ -4,7 +4,7 @@
     uv run python scripts/sync_guard.py --dry    # print what would be protected
 
 Collects the absolute paths in <area>/<topic>/SOURCES.local.md (lines such as
-`- Root: /abs/deck/`), reduces each to a directory, and writes three things into
+`- notes: /abs/notes/`), reduces each to a directory, and writes three things into
 .claude/settings.local.json:
 
 - allow Read(...) for each directory, so reading sources needs no prompt;
@@ -67,7 +67,7 @@ def collect():
 def rule_path(d):
     """Claude Code permission syntax for an absolute path: //abs/path/**.
 
-    Windows paths take the POSIX form, so C:\\Users\\me\\deck -> //c/Users/me/deck/**.
+    Windows paths take the POSIX form, so C:\\Users\\me\\notes -> //c/Users/me/notes/**.
     """
     s = str(d)
     if re.match(r"[A-Za-z]:[\\/]", s):

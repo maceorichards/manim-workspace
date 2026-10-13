@@ -1,7 +1,7 @@
 """Show or change this machine's style override, style.local.yml (gitignored).
 
     uv run python scripts/set_style.py --show                     # effective style, override marked
-    uv run python scripts/set_style.py --preset light-slides      # start from a preset
+    uv run python scripts/set_style.py --preset light             # start from a preset
     uv run python scripts/set_style.py --set background=#0B1020 font="Latin Modern Roman"
     uv run python scripts/set_style.py --set palette.accent=#E07A5F
     uv run python scripts/set_style.py --unset text_color
@@ -36,12 +36,12 @@ DEFAULT_STYLE = house_defaults()
 
 PRESETS = {
     "3b1b-dark": {},  # the house default
-    "light-slides": {
+    "light": {
         "background": "#FFFFFF",
         "text_color": "#1A1A1A",
         "saturation": 1.0,
     },
-    "navy-slides": {
+    "navy": {
         "background": "#0B1020",
         "saturation": 1.2,
     },

@@ -48,8 +48,8 @@ only on your branch, so they leave and come back cleanly.
 - `just lint` and `just check-all` pass (CI runs both on macOS, Linux, and Windows).
 - For scene or `common.py` changes, `just snap templates/topic FiringRateCurve`,
   then look at the PNG. Delete `templates/topic/frames/` afterwards.
-- Names describe content: topics, scene classes, and output files, never deck slots
-  like `s03_vid1`.
+- Names describe content: topics, scene classes, and output files, never their position
+  (`s03_vid1`, `part2_clip3`).
 - Docs say `just …` or `uv run …`, never `.venv/bin/…` (that path doesn't exist on Windows).
 - A new ManimGL footgun goes in `MANIM_WORKFLOW.md` and the `manimgl` skill's
   footgun section, with how it was verified.

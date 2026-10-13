@@ -1,7 +1,7 @@
 ---
 name: set-style-default
-description: Override this machine's default look for every scene (background, font, text color, saturation, fps, named palette colors) without changing the shared template. Use when the user wants a different background or font, a light/slide-friendly look, house colors for their deck, or to reset to the 3b1b default.
-argument-hint: 'light-slides | background #0B1020 | font "Latin Modern Roman" | accent #E07A5F | reset'
+description: Override this machine's default look for every scene (background, font, text color, saturation, fps, named palette colors) without changing the shared template. Use when the user wants a different background or font, a light look, or their own house colors, or to reset to the 3b1b default.
+argument-hint: 'light | background #0B1020 | font "Latin Modern Roman" | accent #E07A5F | reset'
 ---
 
 # Set style default
@@ -27,18 +27,18 @@ when the user explicitly wants to change the template for everyone.
 | `tex_template` | manimlib tex template; `None` auto-picks `empty_ctex` under MiKTeX | `None` |
 | `palette.<name>` | named color, exposed to scenes as `NAME` (e.g. `palette.accent` → `ACCENT`) | none |
 
-Presets: `3b1b-dark` (the default), `light-slides`, `navy-slides`.
+Presets: `3b1b-dark` (the default), `light`, `navy`.
 
 ## Steps
 
 1. Show the current state: `just style` (or `uv run python scripts/set_style.py --show`).
 2. Ask only what the request leaves open. Recommend a preset when one fits. Ask whether
-   palette names should match the deck's names for its colors.
+   palette names should match names the user already uses for these colors.
 3. If the font changes, confirm Pango has it, since it substitutes silently:
    `just doctor "<font>"`. If the font is missing, say so and stop. Don't write a font that
    will fall back.
 4. Write the override, merging into what's there:
-   `just style --preset light-slides` and/or `just style --set background=#0B1020 palette.accent=#E07A5F`.
+   `just style --preset light` and/or `just style --set background=#0B1020 palette.accent=#E07A5F`.
    Remove one key with `--unset key`.
 5. Verify by eye: `just snap templates/topic FiringRateCurve`, then read
    `templates/topic/frames/FiringRateCurve_final.png`. Check that the text is readable on the
