@@ -1,7 +1,7 @@
 # Workbench — <topic>
 
 Sources: see `SOURCES.local.md` (gitignored). Name them here by their labels
-there (e.g. "deck spec, slide 3"), never by absolute path.
+there (e.g. "spec, section 3"), never by absolute path.
 
 ## Workspace smoke scene
 

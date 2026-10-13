@@ -61,7 +61,7 @@ def names_protected(cmd, protected):
         for v in variants(p):
             if contains(cmd, v):
                 return p
-        # a bare cd into the directory by its last component (e.g. `cd presentation-2`)
+        # a bare cd into the directory by its last component (e.g. `cd lecture-notes`)
         base = re.escape(os.path.basename(os.path.normpath(p)))
         if re.search(r"\b(cd|pushd)\s+[^;&|]*" + base + r"(/|\s|$|['\"])", cmd):
             return p

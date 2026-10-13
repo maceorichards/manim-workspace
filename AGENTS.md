@@ -12,11 +12,11 @@ others read this file directly). Areas can add their own `<area>/AGENTS.md`.
   `custom_config.yml`. Don't hard-code `.venv/bin/` or `.venv\Scripts\`.
 - One movie = one topic: `<area>/<topic>/` with `main.py`, `WORKBENCH.md`, and a gitignored
   `SOURCES.local.md`. Start one with `just new <area> <topic> [SceneClass]`. Name topics and
-  scene classes for their content, never for a deck slot (`s03_vid1`).
+  scene classes for their content, never for their position (`s03_vid1`, `part2_clip3`).
 - Code shared by topics in one area goes in `<area>/<module>.py` (importable by name; `common.py`
   puts the area on `sys.path`). Code shared by every area goes in `common.py`. Shared conventions
   go in code, not notes.
-- External context (slide deck specs, notes) stays in its own directory. Before working on a
+- External context (specs, notes, papers) stays in its own directory. Before working on a
   topic, read its `SOURCES.local.md` for the paths, then read those files. Don't copy their
   content into this repo. Record the Manim decisions they lead to in `WORKBENCH.md` (still
   changing) or the topic's optional `context_files/` (stable reference notes, tracked in git),

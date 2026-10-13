@@ -21,6 +21,11 @@ from `git describe --tags main`.
 - Ruff (correctness rules) + pre-commit hook; CI on macOS, Linux, and Windows.
 - More footguns documented: Text/Tex `color=`, CMU Serif θ and `~`, Tex `--` and `:`,
   `--fps` crash, `-s` without `-w`, fractional-frame run_times.
+- No slide-deck assumptions: `SOURCES.example.md` is one flat `- <label>: /abs/path`
+  list (the deck section and assets-folder line are gone), and `just new` warns on any
+  position-style name (`part2_clip3`, `video1`, `s03_vid1`), not just deck slots.
+- **Breaking:** style presets `light-slides` / `navy-slides` are now `light` / `navy`
+  (`style.local.yml` stores values, so existing overrides are unaffected).
 
 ## 0.1.0
 

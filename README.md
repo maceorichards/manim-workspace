@@ -17,7 +17,7 @@ Runs on macOS, Linux, and Windows. Day-to-day usage: [MANIM_WORKFLOW.md](MANIM_W
 | `common.py` | `txt()`, `tex()`, house style, per-topic output, area imports |
 | `templates/topic/` | starting point for a movie, and the install smoke test |
 | `justfile`, `scripts/` | `just new`, `check`, `snap`, `render`, `style`, `setup`, … |
-| `.claude/hooks/readonly_guard.py` | keeps your source decks read-only for the agent |
+| `.claude/hooks/readonly_guard.py` | keeps your source folders read-only for the agent |
 
 ## Setup
 
@@ -65,12 +65,12 @@ Then open `templates/topic/main.py`, put the cursor inside `construct`, and pres
 just new my-course firing_rate_adaptation   # -> my-course/firing_rate_adaptation/
 ```
 
-Point `SOURCES.local.md` at your slides or notes, then `just guard-sync`. Then
+Point `SOURCES.local.md` at your specs or notes, then `just guard-sync`. Then
 ask your agent to run `/iteration-workbench` with what the viewer should see.
 It queues beats, builds the ones you pick, and checks frames
 (`just snap …`) before handing back. When the timing settles, `just render <topic> <Scene> hd`.
 
-Your own style (light background, deck colors, another font) without touching
+Your own style (light background, your own colors, another font) without touching
 the template: `/set-style-default` or `just style --help`.
 
 ## Using this template
