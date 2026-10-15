@@ -4,22 +4,22 @@
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 
-snapshot := ".claude/skills/manimgl/core/assets/snapshot.py"
-doctor := ".claude/skills/manimgl/core/assets/doctor.py"
+snapshot := "tools/snapshot.py"
+doctor := "tools/doctor.py"
 
 # List recipes
 default:
     @just --list --unsorted
 
-# Install system deps (asks first), uv sync, git hooks, then doctor + smoke test
+# Install system deps (asks first), uv sync, git hooks, agent adapter, then doctor + smoke test
 [unix]
-setup:
-    sh scripts/setup.sh
+setup agent="":
+    sh scripts/setup.sh {{ if agent != "" { "--agent " + agent } else { "" } }}
 
-# Install system deps (asks first), uv sync, git hooks, then doctor + smoke test
+# Install system deps (asks first), uv sync, git hooks, agent adapter, then doctor + smoke test
 [windows]
-setup:
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup.ps1
+setup agent="":
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup.ps1 {{ if agent != "" { "-Agent " + agent } else { "" } }}
 
 # Check ffmpeg, LaTeX, fonts, and config
 doctor font="CMU Serif":
@@ -45,7 +45,7 @@ snap topic scene *indices:
 render topic scene quality="low":
     uv run manimgl {{topic}}/main.py {{scene}} -w {{ if quality == "hd" { "--hd" } else if quality == "uhd" { "--uhd" } else { "-l" } }}
 
-# Run every topic's and area module's asserts (what CI runs)
+# Run every topic's and area module's asserts plus the agent-adapter selftest (what CI runs)
 check-all:
     uv run python scripts/check_all.py
 
@@ -57,9 +57,13 @@ lint:
 fmt *paths=".":
     uv run ruff format {{paths}}
 
-# Make every directory named in a SOURCES.local.md read-only for Claude Code
-guard-sync:
-    uv run python scripts/sync_guard.py
+# Agent adapters: status (no args), enable one (claude|codex|cursor|gemini|auto), or --remove one
+agent *args:
+    uv run python scripts/agents.py {{args}}
+
+# Regenerate every enabled agent's adapter (read-only rules from SOURCES, CLAUDE.md shims)
+agent-sync:
+    uv run python scripts/agents.py --sync
 
 # Show or change this machine's style override (style.local.yml); see the set-style-default skill
 style *args="--show":

@@ -19,13 +19,16 @@ a thin wrapper around a `uv run` command you can also type directly.
 <area>/<topic>/videos/           renders, named by scene (gitignored)
 <area>/<topic>/frames/           snapshot PNGs (gitignored)
 <area>/<module>.py               optional model/palette shared by that area's topics
-<area>/AGENTS.md                 agent notes for the area (CLAUDE.md imports it)
+<area>/AGENTS.md                 agent notes for the area (read by every agent)
 templates/topic/                 what `just new` copies; also the smoke test
 templates/area/                  what a new area starts with
 common.py                        txt(), tex(), FONT, STYLE -- `from common import *`
 custom_config.yml                black bg, CMU Serif, saturation 1.5, autoreload
 style.local.yml                  optional per-machine style override (gitignored)
-scripts/                         new_topic, check_all, sync_guard, set_style, setup
+.agents/skills/                  agent skills: manimgl, iteration-workbench, set-style-default
+.agents/hooks/                   read-only guard hook, wired into each agent by `just agent`
+tools/                           snapshot.py, doctor.py
+scripts/                         new_topic, check_all, agents, set_style, setup
 justfile                         the commands below
 ```
 
@@ -61,7 +64,7 @@ just new <area> <topic> [SceneClass]
 This copies `templates/topic/` and renames the scene class (the default is the
 topic in CamelCase). It turns `SOURCES.example.md` into `SOURCES.local.md`, and a
 new area also gets `<area>/AGENTS.md`. Then fill in `SOURCES.local.md`, run
-`just guard-sync`, and replace the firing-rate example and its workbench
+`just agent-sync`, and replace the firing-rate example and its workbench
 initiative. Name topics and scene classes for their content. Each topic has its
 own `videos/`, so scene names only need to be unique within the topic.
 
@@ -78,10 +81,13 @@ source of truth. This repo holds only:
   tracked in git. Cite sources by their labels in `SOURCES.local.md`, never by
   absolute path. Delete `context_files/` from a new topic if you don't need it.
 
-Source directories are read-only for agents. `just guard-sync` (also run by
-`just new` and `just setup`) reads every `SOURCES.local.md` and writes Claude
-Code's deny rules and Bash hook into `.claude/settings.local.json`. Re-run it
-after editing a `SOURCES.local.md`, then restart Claude Code.
+Source directories are read-only for agents. Every enabled agent gets a hook
+(`.agents/hooks/readonly_guard.py`) that reads every `SOURCES.local.md` on each
+call and blocks shell commands that write there, so it is always current. Agents
+with path rules also get deny rules for their file tools; those are written by
+`just agent-sync` (also run by `just new` and `just setup`), so re-run it after
+editing a `SOURCES.local.md`, then reload or restart your agent. What each agent
+gets: `AGENT_SUPPORT.md`.
 
 ## Interactive loop: Manim Notebook in Cursor or VS Code
 
@@ -130,8 +136,7 @@ just check-all                                   # every topic + area module (CI
 
 `list` numbers every `self.play` / `self.wait`. `snap` writes
 `<area>/<topic>/frames/<Scene>_<K>.png` at 480p; for 1080p call the script
-directly with `--hd`: `uv run python .claude/skills/manimgl/core/assets/snapshot.py
-<file> <Scene> 3 --hd`. Read the PNGs and look for: text over text, anything
+directly with `--hd`: `uv run python tools/snapshot.py <file> <Scene> 3 --hd`. Read the PNGs and look for: text over text, anything
 touching the frame edge (14.2 x 8 units), leftovers from an earlier beat, labels
 unreadable at 480p, a `Tex` rendered as prose.
 
@@ -198,4 +203,4 @@ just doctor
 ```
 
 Do not pass `--write-config` to `doctor.py`: it would overwrite `custom_config.yml` with a
-minimal one. More troubleshooting: `.claude/skills/manimgl/core/references/cli-config.md`.
+minimal one. More troubleshooting: `.agents/skills/manimgl/core/references/cli-config.md`.

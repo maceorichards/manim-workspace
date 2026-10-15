@@ -9,7 +9,9 @@ From https://github.com/do-gongil/manimgl-skill (plugin `manimgl` v0.2.1,
 `skills/manimgl-video/`), vendored 2026-09-19. License in `core/LICENSE`.
 
 `core/SKILL-upstream.md` is the original entry point, kept unmodified for
-re-syncing. Our `SKILL.md` is adapted from it: same footgun table and workflow,
+re-syncing. Two of its scripts are workspace tooling rather than skill content and
+were moved out, with this project's changes, to `tools/doctor.py` and
+`tools/snapshot.py` (still MIT; see `tools/README.md`). Our `SKILL.md` is adapted from it: same footgun table and workflow,
 extended with the `extra/` reference rows, the additional CE-name substitutions,
 the `reorient` argument order, and this project's Manim Notebook workflow in
 place of the `-se` CLI loop.
@@ -65,9 +67,9 @@ Neither upstream auto-updates. To pull changes deliberately:
 
 ```bash
 # core
-claude plugin marketplace add do-gongil/manimgl-skill
-# then diff ~/.claude/plugins/cache/manimgl-skill/manimgl/*/skills/manimgl-video/
-# against core/, and uninstall the plugin again
+git clone --depth 1 https://github.com/do-gongil/manimgl-skill /tmp/mgs
+# diff /tmp/mgs/skills/manimgl-video/ against core/; its assets/doctor.py and
+# assets/snapshot.py against tools/ (from the project root)
 
 # extra
 git clone --depth 1 https://github.com/adithya-s-k/manim_skill /tmp/ms
@@ -77,9 +79,9 @@ git clone --depth 1 https://github.com/adithya-s-k/manim_skill /tmp/ms
 After any re-sync, re-run the CE-name audit from the project root:
 
 ```bash
-python - <<'PY'
+uv run python - <<'PY'
 import re, pathlib, manimlib
-root = pathlib.Path(".claude/skills/manimgl")
+root = pathlib.Path(".agents/skills/manimgl")
 CE = ['Create','MathTex','Unwrite','Angle','RightAngle','Star','Axes3D','Dot3D',
       'DoubleArrow','SpinInFromNothing','Wait','AddTextLetterByLetter']
 hits = 0
