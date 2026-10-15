@@ -27,8 +27,8 @@ dev = [
 
 [tool.ruff]
 line-length = 100
-# Vendored skill code keeps its upstream style (see .claude/skills/manimgl/NOTICE.md).
-extend-exclude = [".claude/skills/manimgl", ".claude/worktrees", "scratch"]
+# Vendored skill code keeps its upstream style (see .agents/skills/manimgl/NOTICE.md).
+extend-exclude = [".agents/skills/manimgl", ".worktrees", "scratch"]
 
 [tool.ruff.lint]
 # Correctness only; formatting is not enforced (`just fmt` is opt-in).

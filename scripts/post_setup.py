@@ -1,12 +1,13 @@
 """Second half of setup, the same on every OS: run by setup.sh / setup.ps1 after `uv sync`.
 
-    uv run python scripts/post_setup.py
+    uv run python scripts/post_setup.py [--agent claude|codex|cursor|gemini|auto]
 
-Installs the git pre-commit hook, refreshes the read-only guard, runs the
-doctor, then the template's asserts and one headless snapshot. Prints a
-pass/fail summary. Safe to re-run.
+Installs the git pre-commit hook, generates the agent adapter (scripts/agents.py;
+`auto` or no --agent detects the agent from this shell), runs the doctor, then the
+template's asserts and one headless snapshot. Prints a pass/fail summary. Safe to re-run.
 """
 
+import argparse
 import shutil
 import subprocess
 import sys
@@ -24,15 +25,22 @@ def step(label, cmd, required=True):
 
 
 def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--agent", default="auto", help="agent to generate the adapter for (default: detect)")
+    args = ap.parse_args()
+
     results = []
     if (ROOT / ".git").exists():
         results.append(step("git hooks (pre-commit)", [PY, "-m", "pre_commit", "install"], required=False))
-    results.append(step("read-only guard", [PY, "scripts/sync_guard.py"], required=False))
-    results.append(step("doctor", [PY, ".claude/skills/manimgl/core/assets/doctor.py", "--font", "CMU Serif"]))
+    results.append(step(
+        f"agent adapter ({args.agent}; pick another with `just agent <name>`)",
+        [PY, "scripts/agents.py", args.agent], required=False,
+    ))
+    results.append(step("doctor", [PY, "tools/doctor.py", "--font", "CMU Serif"]))
     results.append(step("template asserts", [PY, "templates/topic/main.py"]))
     results.append(step(
         "template snapshot (Text, Tex, Axes; needs LaTeX and an OpenGL context)",
-        [PY, ".claude/skills/manimgl/core/assets/snapshot.py", "templates/topic/main.py", "FiringRateCurve", "--quiet"],
+        [PY, "tools/snapshot.py", "templates/topic/main.py", "FiringRateCurve", "--quiet"],
     ))
     frame = TEMPLATE / "frames" / "FiringRateCurve_final.png"
     if frame.exists():

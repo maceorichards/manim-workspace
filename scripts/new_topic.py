@@ -6,7 +6,7 @@
 Renames the template scene class (default: the topic in CamelCase), turns
 SOURCES.example.md into SOURCES.local.md, and leaves out any generated output
 the template may hold. A new area also gets <area>/AGENTS.md from
-templates/area/. Ends by refreshing the read-only guard (sync_guard.py).
+templates/area/. Ends by regenerating the enabled agents' adapters (agents.py --sync).
 """
 
 import argparse
@@ -47,7 +47,7 @@ def main():
                 f"warning: {label} {value!r} looks like a position (part/clip/slide number); "
                 "name it for its content"
             )
-    if args.area in {"templates", "scripts", "docs"} or args.area.startswith("."):
+    if args.area in {"templates", "scripts", "docs", "tools"} or args.area.startswith("."):
         sys.exit(f"{args.area!r} is reserved")
 
     scene = args.scene or camel(args.topic)
@@ -74,10 +74,10 @@ def main():
 
     rel = dest.relative_to(ROOT).as_posix()
     print(f"created {rel}/ with scene {scene}")
-    print(f"next: fill in {rel}/SOURCES.local.md, then `just guard-sync`")
+    print(f"next: fill in {rel}/SOURCES.local.md, then `just agent-sync`")
     print(f"      replace the firing-rate example in {rel}/main.py and WORKBENCH.md")
     sys.stdout.flush()
-    subprocess.run([sys.executable, str(ROOT / "scripts" / "sync_guard.py")], check=False)
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "agents.py"), "--sync"], check=False)
 
 
 if __name__ == "__main__":

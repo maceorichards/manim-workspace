@@ -1,14 +1,18 @@
 # Workspace setup for Windows 10/11 (winget).
-#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1         # asks before installing
-#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1 -Yes    # no prompts
-# System packages: Git (Git Bash runs Claude Code's hooks), uv, just, ffmpeg, MiKTeX, CMU Serif.
-# Then: uv sync and scripts/post_setup.py (git hooks, guard, doctor, smoke test).
-param([switch]$Yes)
+#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1                 # asks before installing
+#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1 -Check          # list what's missing only
+#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1 -Yes            # no prompts
+#   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1 -Agent claude   # also set up an agent
+# System packages: Git (Git Bash runs agent hooks), uv, just, ffmpeg, MiKTeX, CMU Serif.
+# Then: uv sync and scripts/post_setup.py (git hooks, agent adapter, doctor, smoke test).
+param([switch]$Yes, [switch]$Check, [string]$Agent = "")
 $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..")
 
 function Have($cmd) { [bool](Get-Command $cmd -ErrorAction SilentlyContinue) }
+$Missing = @()
 function Ask($question) {
+    if ($Check) { $script:Missing += $question; return $false }
     if ($Yes) { return $true }
     (Read-Host "$question [y/N]") -match '^[yY]'
 }
@@ -32,7 +36,7 @@ foreach ($cmd in $packages.Keys) {
 }
 Refresh-Path
 
-if (Have initexmf) {
+if (-not $Check -and (Have initexmf)) {
     # Let MiKTeX fetch missing LaTeX packages on first use instead of prompting mid-render.
     initexmf --set-config-value "[MPM]AutoInstall=1" | Out-Null
 }
@@ -54,10 +58,17 @@ if (-not $haveFont -and (Ask "Download and install the CMU Serif font for this u
     Write-Host "Installed CMU fonts. Open a new terminal (or sign out and in) if doctor can't see them."
 }
 
+if ($Check) {
+    if ($Missing) { Write-Host "missing:"; $Missing | ForEach-Object { Write-Host "  - $_" } }
+    else { Write-Host "nothing missing" }
+    Write-Host "(-Check installs nothing; winget may show a Windows permission prompt on a full setup)"
+    exit 0
+}
+
 if (-not (Have uv)) { Write-Host "uv is required: https://docs.astral.sh/uv/"; exit 1 }
 
 Write-Host "`n== python environment"
 uv sync
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
-uv run python scripts/post_setup.py
+if ($Agent) { uv run python scripts/post_setup.py --agent $Agent } else { uv run python scripts/post_setup.py }
 exit $LASTEXITCODE

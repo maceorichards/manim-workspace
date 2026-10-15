@@ -12,8 +12,8 @@ by its label below.
 ## Sources
 
 One line per source: a short label (cite it by that label), then an absolute
-path to a file or folder. After `just guard-sync`, each folder named here (or
-the folder holding a named file) is read-only for the agent.
+path to a file or folder. Each folder named here (or the folder holding a named
+file) is read-only for agents; run `just agent-sync` after editing this file.
 
 - <label>: /absolute/path/to/file-or-folder
 - spec: /absolute/path/to/spec.md

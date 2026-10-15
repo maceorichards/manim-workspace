@@ -120,10 +120,10 @@ should start from `core/references/patterns.md`.
 
 Runnable scripts (stdlib only):
 
-- `core/assets/doctor.py` — environment check: manimlib, ffmpeg, LaTeX/MiKTeX,
+- `just doctor` (`tools/doctor.py`) — environment check: manimlib, ffmpeg, LaTeX/MiKTeX,
   dvisvgm, fonts, `custom_config.yml`. `--write-config` writes the fixes. Run
   this first when a render fails for a reason that is not the scene code.
-- `core/assets/snapshot.py` — PNG of the scene at chosen animation indices.
+- `just snap` (`tools/snapshot.py`) — PNG of the scene at chosen animation indices.
 - `core/assets/smoke_test.py` — geometry and `Text` only, no LaTeX required.
 
 `extra/examples/` holds 192 scene classes across 75 files; `extra/templates/`

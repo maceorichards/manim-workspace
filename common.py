@@ -1,6 +1,6 @@
 """Shared helpers for every scene file in this project. `from common import *`.
 
-Adapted from .claude/skills/manimgl/core/assets/templates/common.py (MIT).
+Adapted from .agents/skills/manimgl/core/assets/templates/common.py (MIT).
 Installed editable via pyproject.toml, so it imports from any topic folder,
 and manimgl's autoreload picks up edits without restarting a scene.
 

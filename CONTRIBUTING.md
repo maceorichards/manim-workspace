@@ -9,9 +9,10 @@
 
 `main` must stay a clean template that anyone can clone. The pre-commit hook
 (`scripts/check_staged.py`, installed by `just setup`) refuses commits on `main`
-that touch anything outside `.claude/ .github/ .vscode/ scripts/ templates/` and
-the root files. On every branch, it also refuses generated output (`videos/`,
-`frames/`, `cache/`, `scratch/`), media files, and `*.local.*` files.
+that touch anything outside `.agents/ .github/ .vscode/ scripts/ templates/ tools/`
+and the root files. On every branch, it also refuses generated output (`videos/`,
+`frames/`, `cache/`, `scratch/`), media files, `*.local.*` files, and generated
+agent adapters (`.claude/`, `.codex/`, `.cursor/`, `.gemini/`, `CLAUDE.md`).
 
 ## Branch workflow
 
@@ -31,16 +32,17 @@ not rebase, since your branch is pushed. Area-specific agent notes go in
 So template fixes don't need a branch switch or a stash:
 
 ```bash
-git worktree add .claude/worktrees/main main     # .claude/worktrees/ is gitignored
-cd .claude/worktrees/main && uv sync             # its own .venv, see below
+git worktree add .worktrees/main main           # .worktrees/ is gitignored
+cd .worktrees/main && uv sync                    # its own .venv, see below
 # edit, `just lint && just check-all`, commit, push
-cd ../../.. && git merge main                    # back in your branch's checkout
+cd ../.. && git merge main                       # back in your branch's checkout
 ```
 
 The worktree needs **its own** `uv sync`. `common.py` is installed editable, so
 with a shared `.venv`, `from common import *` silently loads the other checkout's
 `common.py`. Run commands from the worktree's root so its `custom_config.yml` is
-used. Without a worktree, `git switch main` works too: area folders are tracked
+used, and `just agent <name>` there too if an agent will work in it (adapters are
+per checkout). Without a worktree, `git switch main` works too: area folders are tracked
 only on your branch, so they leave and come back cleanly.
 
 ## Before committing
@@ -53,9 +55,12 @@ only on your branch, so they leave and come back cleanly.
 - Docs say `just …` or `uv run …`, never `.venv/bin/…` (that path doesn't exist on Windows).
 - A new ManimGL footgun goes in `MANIM_WORKFLOW.md` and the `manimgl` skill's
   footgun section, with how it was verified.
+- Agent support lives in neutral sources: `AGENTS.md`, `.agents/`, `scripts/agents.py`.
+  Never commit a generated agent folder or `CLAUDE.md`; change the generator instead.
 - Template release: add a `CHANGELOG.md` entry and tag it (`git tag v0.2.0`).
 
 ## Vendored material
 
-`.claude/skills/manimgl/` is vendored from two upstreams with different
-licenses; read its `NOTICE.md` before editing or re-syncing. Ruff skips it on purpose.
+`.agents/skills/manimgl/` (and `tools/doctor.py`, `tools/snapshot.py`, which came
+from it) is vendored from two upstreams with different licenses; read its
+`NOTICE.md` before editing or re-syncing. Ruff skips the skill folder on purpose.
